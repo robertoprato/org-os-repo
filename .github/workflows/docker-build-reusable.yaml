@@ -28,7 +28,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      id-token: write # This is required for requesting the JWT token from OIDC
 
     strategy:
       matrix:
@@ -96,7 +95,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      id-token: write # This is required for requesting the JWT token from OIDC
 
     needs:
       - build
@@ -224,7 +222,6 @@ jobs:
   cleanup-on-failure:
     permissions:
       contents: read
-      id-token: write # This is required for requesting the JWT token from OIDC
     needs:
       - build
       - create-image-manifest
