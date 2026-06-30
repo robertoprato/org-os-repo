@@ -79,6 +79,8 @@ jobs:
             ${{ inputs.image-version }}-${{ matrix.platform.name }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          annotations: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
       - name: Build and push Docker image
         id: build-and-push
@@ -89,6 +91,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=gha,scope=${{ inputs.image-name }}-${{ matrix.platform.name }}
           cache-to: type=gha,mode=max,scope=${{ inputs.image-name }}-${{ matrix.platform.name }}
 
