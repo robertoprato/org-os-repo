@@ -67,7 +67,6 @@ jobs:
       context: frontend
       image-name: soilhive-core-frontend
       image-version: ${{ needs.image-version.outputs.imageVersion }}
-      description: SoilHive Core — Frontend
     permissions:
       contents: read
       packages: write
