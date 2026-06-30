@@ -7,28 +7,32 @@ on:
       - synchronize
       - edited
 
-permissions:
-  pull-requests: write
-  contents: read
+permissions: {}
 
 jobs:
-  gate:
+  check:
+    uses: ./.github/workflows/gate-check-reusable.yaml
+    with:
+      username: ${{ github.event.pull_request.user.login }}
+      base-sha: ${{ github.event.pull_request.base.sha }}
+
+  close-pr:
+    needs: check
+    if: needs.check.outputs.allowed == 'false'
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
-      - uses: actions/checkout@v4
       - uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            const allow = fs.readFileSync('contributors.txt', 'utf8')
-              .split('\n').map(s => s.trim().toLowerCase()).filter(Boolean);
-            const author = context.payload.pull_request.user.login.toLowerCase();
-            if (allow.includes(author)) return;
             await github.rest.issues.createComment({
-              ...context.repo, issue_number: context.payload.pull_request.number,
-              body: `Thanks @${author}, but PRs are limited to approved contributors right now.`
+              ...context.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `Thanks @${context.payload.pull_request.user.login}, but PRs are limited to approved contributors right now.`
             });
             await github.rest.pulls.update({
-              ...context.repo, pull_number: context.payload.pull_request.number,
+              ...context.repo,
+              pull_number: context.payload.pull_request.number,
               state: 'closed'
             });
