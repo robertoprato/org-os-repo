@@ -6,6 +6,16 @@ on:
       - closed
     branches:
       - main
+  workflow_call:
+    inputs:
+      image-name:
+        description: The name of the Docker image to clean up
+        type: string
+        required: true
+      image-version:
+        description: The version tag to clean up (all tags starting with this prefix will be deleted)
+        type: string
+        required: true
 
 jobs:
   delete-images:
@@ -20,9 +30,15 @@ jobs:
       - name: Delete PR images from GHCR
         run: |
           OWNER="${{ github.repository_owner }}"
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          PACKAGE_NAME="prima-tech-challenge"
-          TAG_PREFIX="pr-${PR_NUMBER}-"
+
+          if [[ "${{ github.event_name }}" == "workflow_call" ]]; then
+            PACKAGE_NAME="${{ inputs.image-name }}"
+            TAG_PREFIX="${{ inputs.image-version }}"
+          else
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            PACKAGE_NAME="prima-tech-challenge"
+            TAG_PREFIX="pr-${PR_NUMBER}-"
+          fi
 
           if gh api "/orgs/${OWNER}" --silent 2>/dev/null; then
             API_BASE="orgs/${OWNER}"
