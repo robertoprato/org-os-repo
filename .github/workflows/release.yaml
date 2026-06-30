@@ -7,7 +7,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write
   issues: write
   pull-requests: write
 
@@ -20,7 +20,7 @@ jobs:
         with:
           client-id: ${{ vars.RELEASE_BUMPER_APPID }}
           private-key: ${{ secrets.RELEASE_BUMPER_PRIVATE_KEY }}
-          permission-contents: read
+          permission-contents: write
           permission-pull-requests: write
           # permission-workflows: write
 
