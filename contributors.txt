@@ -1,1 +1,1 @@
-@release-please-butterneck[bot]
+release-please-butterneck[bot]
